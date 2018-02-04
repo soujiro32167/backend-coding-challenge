@@ -1,0 +1,20 @@
+{
+  "name": "coveo_challange",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "fast-levenshtein": "^2.0.6",
+    "csv-parse": "^2.0.0",
+    "lodash": "^4.17.4",
+    "should": "^13.2.1",
+    "string-similarity": "^1.2.0",
+    "talisman": "^0.20.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Eli K.",
+  "license": "ISC"
+}
