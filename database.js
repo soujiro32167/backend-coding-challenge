@@ -25,7 +25,7 @@ const countryMap = {
 **/
 module.exports = class DataBase{
 	constructor(){
-		this.data = {};
+		this.data = [];
 	}
 
 	get size(){
@@ -33,7 +33,11 @@ module.exports = class DataBase{
 	}
 
 	async query(q, coordinates) {
-		return [];
+		return this.data;
+	}
+
+	async getData(){
+		return this.data;
 	}
 
 	static provinceMap(admin1){

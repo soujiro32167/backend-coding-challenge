@@ -52,8 +52,6 @@ console.timeEnd('parse');
 
 //console.log(db[db.length - 1]);
 
-should.equal(db.size, 7237);
-
 const iterations = 10;
 
 //console.log(db);

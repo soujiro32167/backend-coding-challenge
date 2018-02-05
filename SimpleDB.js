@@ -13,6 +13,9 @@ const textScoreThreshold = 0.5;
 class SimpleDB extends DataBase {
 	constructor({filePath}){
 		super();
+		if (!filePath){
+			throw new Error('No data file path specified');
+		}
 		const fileStr = fs.readFileSync(filePath, 'utf8');
 
 		this.data = syncParse(fileStr, {
@@ -69,12 +72,12 @@ class SimpleDB extends DataBase {
 
 		const result =  withScoreAndDistance
 			.map(record => {
-				const distanceScore = record.distance && 1 - (( record.distance - minDistance ) / ( maxDistance - minDistance ));
+				const distanceScore = record.distance !== undefined && 1 - (( record.distance - minDistance ) / ( maxDistance - minDistance ));
 				const textScore = record.textScore;
 				return {
 					...record,
 					distanceScore,
-					score: record.distance ? (distanceScore * DistanceWeight) + (textScore * TextWeight) : record.textScore
+					score: record.distance !== undefined ? (distanceScore * DistanceWeight) + (textScore * TextWeight) : record.textScore
 				}
 			})
 			.orderBy('score', 'desc')
