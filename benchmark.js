@@ -63,7 +63,7 @@ let results = [];
 _.range(iterations)
 	.forEach(i => {
 		performance.mark('query' + i);
-		results.push(db.query('Londo', [-79.4163, 43.70011], db).then(data => {
+		results.push(db.query('londo', [-79.4163, 43.70011], db).then(data => {
 			performance.mark('query' + i + 'end');
 			performance.measure(`query${i}total`, 'query' + i, 'query' + i + 'end');
  			totalTime += performance.getEntriesByName(`query${i}total`)[0].duration;

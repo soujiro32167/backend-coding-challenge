@@ -8,6 +8,7 @@ const Util = require('./util');
 
 const TextWeight = 0.5;
 const DistanceWeight = 0.5;
+const textScoreThreshold = 0.5;
 
 class SimpleDB extends DataBase {
 	constructor({filePath}){
@@ -20,7 +21,19 @@ class SimpleDB extends DataBase {
 			relax: true,
 			max_limit_on_data_read: 300000,
 			quote: null
-		})
+		});
+
+		this.data
+			.forEach(r => {
+				// map Canadian provinces
+				if (r.country === 'CA'){
+					r.admin1 = DataBase.provinceMap(r.admin1)
+				}
+				// numerify the coordinates
+				r.lat = +r.lat;
+				r.long = +r.long;
+				r.countryFull = DataBase.countryMap(r.country)
+			})
 	}
 
 	/**
@@ -29,6 +42,10 @@ class SimpleDB extends DataBase {
 	* @returns {Promise} a promise for an arrayof results
 	**/
 	async query(q, coordinates){
+		if (!q){
+			return [];
+		}
+
 		let maxDistance = -Infinity;
 		let minDistance = Infinity;
 		const withScoreAndDistance = _(this.data)
@@ -39,25 +56,19 @@ class SimpleDB extends DataBase {
 				maxDistance = maxDistance < distance ? distance : maxDistance;
 				minDistance = minDistance > distance ? distance : minDistance;
 				return {
-					name: record.name,
+					...record,
 					textScore: diceSimilarity,
-					distance: distance,
-					lat: +record.lat,
-					long: +record.long
+					distance: distance
 				}
 			})
 			// take out clearly irrelevant results
-			.filter(record => record.textScore > 0);
-
-			//maxDistance = withScoreAndDistance.maxBy('distance').distance;
+			.filter(record => record.textScore > textScoreThreshold);
 
 		// calculate the score as a weighted sum of text relevance and distance
-		// (distance / maxDistance): is the % of maximum distance
-		// 100 - % of max distance: we want the inverse - % how close we are compared to all places
+		// distance is normalized using feature scaling https://en.wikipedia.org/wiki/Feature_scaling
 
 		const result =  withScoreAndDistance
 			.map(record => {
-				//const distanceScore = record.distance && (100 - (record.distance / maxDistance)) / 100;
 				const distanceScore = record.distance && 1 - (( record.distance - minDistance ) / ( maxDistance - minDistance ));
 				const textScore = record.textScore;
 				return {
@@ -69,8 +80,8 @@ class SimpleDB extends DataBase {
 			.orderBy('score', 'desc')
 			.value();
 
-		console.log('max distance', maxDistance);
-		console.log('min distance', minDistance);
+		//console.log('max distance', maxDistance);
+		//console.log('min distance', minDistance);
 
 		return result;
 	}

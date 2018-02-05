@@ -11,6 +11,7 @@ function precisionRound(number, precision) {
 }
 
 module.exports =  {
+	// credit to https://www.movable-type.co.uk/scripts/latlong.html
 	geoDistance: ([lon1, lat1], [lon2, lat2]) => {
 
 		const φ1 = toRadians(lat1);
