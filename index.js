@@ -8,6 +8,8 @@ let db = new DB({
 
 const RESULT_LIMIT = 10;
 
+const PORT = 3000;
+
 app.get('/suggestions', async (req, res) => {
 	try {
 		const {q, long, lat, results} = req.query;
@@ -41,4 +43,4 @@ app.get('/suggestions', async (req, res) => {
 
 app.use('/static', express.static(path.join(__dirname, 'public')))
 
-app.listen(3000, () => console.log('Example app listening on port 3000!'))
+app.listen(process.env.PORT || PORT, () => console.log('Example app listening on port', process.env.PORT || PORT))
